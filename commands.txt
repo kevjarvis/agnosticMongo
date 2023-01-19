@@ -1,0 +1,93 @@
+
+use agnosticMongo
+db // verifica que estamos en agnosticMongo
+db.createCollection('productos')
+db.createCollection('mensajes')
+
+// agregar 10 productos
+try {
+    db.productos.insertMany([
+        {nombre: "producto 1", precio: 2000, thumbnail: "https://via.placeholder.com/400x400?text=Producto%201"},
+        {nombre: "producto 2", precio: 2404, thumbnail: "https://via.placeholder.com/400x400?text=Producto%202"},
+        {nombre: "producto 3", precio: 4020, thumbnail: "https://via.placeholder.com/400x400?text=Producto%203"},
+        {nombre: "producto 4", precio: 1820, thumbnail: "https://via.placeholder.com/400x400?text=Producto%204"},
+        {nombre: "producto 5", precio: 200, thumbnail: "https://via.placeholder.com/400x400?text=Producto%205"},
+        {nombre: "producto 6", precio: 2393, thumbnail: "https://via.placeholder.com/400x400?text=Producto%206"},
+        {nombre: "producto 7", precio: 1199, thumbnail: "https://via.placeholder.com/400x400?text=Producto%207"},
+        {nombre: "producto 8", precio: 1203, thumbnail: "https://via.placeholder.com/400x400?text=Producto%208"},
+        {nombre: "producto 9", precio: 4302, thumbnail: "https://via.placeholder.com/400x400?text=Producto%209"},
+        {nombre: "producto 10", precio: 4999, thumbnail: "https://via.placeholder.com/400x400?text=Producto%2010"},
+    ])
+} catch (e) {
+    print(e)
+}
+
+// agrega 10 mensajes
+try {
+    db.mensajes.insertMany([
+        {nombre: "User1", mensaje: "Mensaje 1", timestamp: ISODate()},
+        {nombre: "User2", mensaje: "Mensaje 2", timestamp: ISODate()},
+        {nombre: "User1", mensaje: "mensaje 3", timestamp: ISODate()},
+        {nombre: "User2", mensaje: "mensaje 4", timestamp: ISODate()},
+        {nombre: "User1", mensaje: "mensaje 5", timestamp: ISODate()},
+        {nombre: "User2", mensaje: "mensaje 6", timestamp: ISODate()},
+        {nombre: "User1", mensaje: "mensaje 7", timestamp: ISODate()},
+        {nombre: "User2", mensaje: "mensaje 8", timestamp: ISODate()},
+        {nombre: "User1", mensaje: "mensaje 9", timestamp: ISODate()},
+        {nombre: "User2", mensaje: "mensaje 10", timestamp: ISODate()},
+    ])
+} catch (e) {
+    print(e)
+}
+
+// listar los productos
+db.productos.find()
+
+// listar los mensajes
+db.mensajes.find()
+
+// listar cantidad de productos
+db.productos.estimatedDocumentCount()
+
+// listar cantidad de mensajes
+db.mensajes.estimatedDocumentCount()
+
+// CRUD a productos
+
+// Agrega un producto a la colección productos
+db.productos.insertOne({nombre: "producto X", precio: 3810, thumbnail:"https://via.placeholder.com/400x400?text=Producto%20X"})
+
+// Realiza busqueda por nombre específico
+db.productos.find({precio: {$lt: 1000}})
+db.productos.find({precio: {$gt: 1000, $lt:3000}})
+db.productos.find({precio: {$gt: 3000}})
+
+db.productos
+    .find() // extrae todos los documentos
+    .sort({precio: 1}) // los ordena por precio, de menor a mayor
+    .skip(2) // salta los 2 primeros
+    .limit(1) // limitamos a que muestre solo 1
+    .projection({"nombre": 1}) // proyectamos para que nos muestre solo el nombre
+
+// agrega a todos los productos un stock de 100
+db.productos.updateMany({}, {$set: {stock: 100}})
+
+// actualiza el stock a 0 a todos los productos con precio mayor que 4000
+db.productos.updateMany({precio: {$gt: 4000}}, {$set: {stock: 0}})
+
+// borra los productos con precio menor a 1000
+db.productos.deleteMany({precio: {$lt: 1000}})
+
+// creación de usuario
+
+use admin
+
+db.createUser({
+    user: 'pepe',
+    pwd: 'asd456',
+    roles: [
+        { role: 'read', db: 'agnosticMongo' }
+    ]
+})
+
+// mongosh -u pepe -p asd456
